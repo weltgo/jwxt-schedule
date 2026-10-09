@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+schedule.json
+schedule.ics
+schedule.csv
+jwxt.toml
+cookies.json
+*.session
+.pytest_cache/
+.jwxt/

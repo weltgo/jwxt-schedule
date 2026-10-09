@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jwxt-schedule"
+version = "0.3.0"
+description = "从学校教务系统获取课表，导出 JSON / iCal / CSV"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx>=0.27",
+  "beautifulsoup4>=4.12",
+  "lxml>=5.0",
+  "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+crypto = ["cryptography>=42"]
+dev = ["cryptography>=42"]
+
+[project.scripts]
+jwxt = "jwxt.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["jwxt*"]
+
+[tool.setuptools.package-data]
+jwxt = ["py.typed"]
