@@ -13,6 +13,11 @@ class CLIParserTests(unittest.TestCase):
         self.assertFalse(args.no_ics)
         self.assertFalse(args.no_csv)
 
+    def test_browser_defaults(self):
+        args = build_parser().parse_args(["browser"])
+        self.assertEqual(args.port, 8765)
+        self.assertEqual(args.outdir, ".")
+
     def test_parse_uses_positional_input(self):
         args = build_parser().parse_args(["parse", "课表.html"])
         self.assertEqual(args.input, "课表.html")

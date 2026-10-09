@@ -245,8 +245,18 @@ def build_config_interactive(path: str | Path = "jwxt.toml") -> tuple[AppConfig,
 def run_interactive() -> int:
     print("=" * 58)
     print("  教务课表获取向导")
-    print("  直接回答几个问题即可抓取课表，密码不会保存")
     print("=" * 58)
+    print("使用方式：")
+    print("  1. 自动抓取：内置适配器，适合正方和常见表单系统")
+    print("  2. 从浏览器读取：适合其他所有系统，不需要配置接口")
+    choice = _ask("请选择", "1")
+    if choice.lower() in {"2", "b", "browser", "浏览器"}:
+        from .bridge import run_browser_bridge
+
+        print("\n将启动浏览器桥；按 Ctrl+C 可以停止。")
+        return run_browser_bridge(outdir=Path.cwd())
+
+    print()
     try:
         config, path = build_config_interactive()
     except KeyboardInterrupt:

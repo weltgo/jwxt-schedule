@@ -7,6 +7,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
+from .bridge import run_browser_bridge
 from .config import SAMPLE_CONFIG, AppConfig, load_config
 from .display import format_schedule
 from .exporters.csv_out import save_csv
@@ -34,6 +35,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_setup = sub.add_parser("setup", help="交互式配置向导（推荐首次使用）")
     p_setup.add_argument("--path", default="jwxt.toml", help="配置文件路径，默认 jwxt.toml")
     p_setup.set_defaults(func=cmd_setup)
+
+    # browser：从设备浏览器读取
+    p_browser = sub.add_parser(
+        "browser",
+        help="从浏览器读取课表（适合当前无法自动识别的教务系统）",
+    )
+    p_browser.add_argument("--port", type=int, default=8765, help="本机桥接端口，默认 8765")
+    p_browser.add_argument("--outdir", default=".", help="导出目录，默认当前目录")
+    p_browser.add_argument("--no-open", action="store_true", help="不自动打开浏览器说明页")
+    p_browser.add_argument("--no-snapshot", action="store_true", help="不保存原始页面快照")
+    p_browser.add_argument("--verbose", action="store_true", help="打印服务端请求日志")
+    p_browser.set_defaults(func=cmd_browser)
 
     # fetch：抓取
     p_fetch = sub.add_parser(
@@ -253,6 +266,16 @@ def cmd_probe(args) -> int:
     print(f"  1. 运行 `jwxt fetch --config <配置>` 尝试抓取")
     print(f"  2. 若需要验证码/统一身份认证，请在浏览器登录后用 --cookie-string 或 --cookie-file 导入会话")
     return 0
+
+
+def cmd_browser(args) -> int:
+    return run_browser_bridge(
+        port=getattr(args, "port", 8765),
+        outdir=Path(getattr(args, "outdir", ".")),
+        open_browser=not getattr(args, "no_open", False),
+        save_snapshots=not getattr(args, "no_snapshot", False),
+        verbose=getattr(args, "verbose", False),
+    )
 
 
 def _find_default_config() -> str:
